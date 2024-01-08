@@ -1,4 +1,6 @@
-﻿using MongoDB.Bson;
+﻿using EscapeFromTheWoods.Objects;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,19 +11,25 @@ namespace MongoDBManager
 {
     public class DBWoodRecords
     {
-        public DBWoodRecords(int woodID, int treeID, int x, int y)
+        public DBWoodRecords(int woodID, List<Tree> trees)
         {
             WoodID = woodID;
-            TreeID = treeID;
-            X = x;
-            Y = y;
+            Trees = trees;
         }
 
+        public DBWoodRecords(ObjectId recordId, int woodID, List<Tree> trees)
+        {
+            RecordId = recordId;
+            WoodID = woodID;
+            Trees = trees;
+        }
+
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        [BsonElement("_id")]
         public ObjectId RecordId { get; set; }
-        public int WoodID { get; set; }
-        public int TreeID { get; set; }
-        public int X { get; set; }
-        public int Y { get; set; }
+        public int WoodID { get; set; }     
+        public List<Tree> Trees { get; set; }
 
     }
 }

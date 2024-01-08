@@ -1,27 +1,36 @@
-﻿using MongoDB.Bson;
+﻿using EscapeFromTheWoods.Database;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using System.Collections.Generic;
 
 namespace MongoDBManager
 {
     public class DBMonkeyRecords
     {
-        public DBMonkeyRecords(int monkeyID, string monkeyName, int woodID, int seqNr, int treeID, int x, int y)
+        public DBMonkeyRecords(int monkeyID, string monkeyName, int woodID, List<DBRouteRecords> route)
         {
             MonkeyID = monkeyID;
             MonkeyName = monkeyName;
             WoodID = woodID;
-            SeqNr = seqNr;
-            TreeID = treeID;
-            X = x;
-            Y = y;
+            Route = route;
         }
 
+        public DBMonkeyRecords(ObjectId recordId, int monkeyID, string monkeyName, int woodID, List<DBRouteRecords> route)
+        {
+            RecordId = recordId;
+            MonkeyID = monkeyID;
+            MonkeyName = monkeyName;
+            WoodID = woodID;
+            Route = route;
+        }
+
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        [BsonElement("_id")]
         public ObjectId RecordId { get; set; }
         public int MonkeyID { get; set; }
         public string MonkeyName { get; set; }
         public int WoodID { get; set; }
-        public int SeqNr { get; set; }
-        public int TreeID { get; set; }
-        public int X { get; set; }
-        public int Y { get; set; }
+        public List<DBRouteRecords> Route { get; set; }
     }
 }

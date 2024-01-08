@@ -1,4 +1,5 @@
-﻿using MongoDBManager;
+﻿using EscapeFromTheWoods.Database;
+using MongoDBManager;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -52,12 +53,16 @@ namespace EscapeFromTheWoods.Objects
         {
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.WriteLine($"{woodID}:write db routes {woodID},{monkey.name} start");
-            List<DBMonkeyRecords> records = new List<DBMonkeyRecords>();
+            List<DBRouteRecords> routeRecords = new List<DBRouteRecords>();
+            List<DBLogs> logs = new List<DBLogs>();
             for (int j = 0; j < route.Count; j++)
             {
-                records.Add(new DBMonkeyRecords(monkey.monkeyID, monkey.name, woodID, j, route[j].treeID, route[j].x, route[j].y));
+                routeRecords.Add(new DBRouteRecords(j, route[j].treeID, route[j].x, route[j].y));
+                logs.Add(new DBLogs(woodID, monkey.monkeyID, $"{monkey.name} is now in tree {route[j].treeID} at location ({route[j].x},{route[j].y})"));
             }
-            db.InsertMonkeyRecords(records);
+            
+            db.InsertMonkeyRecords(new DBMonkeyRecords(monkey.monkeyID, monkey.name, woodID, routeRecords));
+            db.InsertLogs(logs);
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.WriteLine($"{woodID}:write db routes {woodID},{monkey.name} end");
         }
@@ -99,12 +104,7 @@ namespace EscapeFromTheWoods.Objects
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"{woodID}:write db wood {woodID} start");
-            List<DBWoodRecords> records = new List<DBWoodRecords>();
-            foreach (Tree t in trees)
-            {
-                records.Add(new DBWoodRecords(woodID, t.treeID, t.x, t.y));
-            }
-            db.InsertWoodRecords(records);
+            db.InsertWoodRecords(new DBWoodRecords(woodID, trees));
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"{woodID}:write db wood {woodID} end");
         }

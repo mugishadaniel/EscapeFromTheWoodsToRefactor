@@ -15,10 +15,10 @@ namespace EscapeFromTheWoods
             string connectionString = @"mongodb://localhost:27017/";
             DBRepository db = new DBRepository(connectionString);
 
-            string path = @"C:\Hogent\programmeren specialisatie\woodsoef3\EscapeFromTheWoodsToRefactor\monkeys";
+            string path = @"C:\Hogent\programmeren specialisatie\EscapeWoods\EscapeFromTheWoodsToRefactor\monkeys";
             Map m1 = new Map(0, 500, 0, 500);
             Wood w1 = WoodBuilder.GetWood(500, m1, path,db);
-            w1.PlaceMonkey("Carter", IDgenerator.GetMonkeyID());
+            w1.PlaceMonkey("Alice", IDgenerator.GetMonkeyID());
             w1.PlaceMonkey("Janice", IDgenerator.GetMonkeyID());
             w1.PlaceMonkey("Toby", IDgenerator.GetMonkeyID());
             w1.PlaceMonkey("Mindy", IDgenerator.GetMonkeyID());

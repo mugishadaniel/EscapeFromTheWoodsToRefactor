@@ -11,25 +11,25 @@ namespace MongoDBManager
     {
         private IMongoClient DbClient;
         private IMongoDatabase Database;
-        private string ConnectionString;
+        private readonly string ConnectionString;
 
         public DBRepository(string connectionString)
         {
             ConnectionString = connectionString;
-            DbClient = new MongoClient(connectionString);
+            DbClient = new MongoClient(ConnectionString);
             Database = DbClient.GetDatabase("EscapeFromTheWoods");
         }
 
-        public void InsertWoodRecords(List<DBWoodRecords> data)
+        public void InsertWoodRecords(DBWoodRecords data)
         {
             var collection = Database.GetCollection<DBWoodRecords>("WoodRecords");
-            collection.InsertMany(data);
+            collection.InsertOne(data);
         }
 
-        public void InsertMonkeyRecords(List<DBMonkeyRecords> data)
+        public void InsertMonkeyRecords(DBMonkeyRecords data)
         {
             var collection = Database.GetCollection<DBMonkeyRecords>("MonkeyRecords");
-            collection.InsertMany(data);
+            collection.InsertOne(data);
         }
 
         public void InsertLogs(List<DBLogs> data)
