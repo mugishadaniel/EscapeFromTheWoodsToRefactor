@@ -18,6 +18,8 @@ namespace EscapeFromTheWoods.Objects
         public int woodID { get; set; }
         public List<Tree> trees { get; set; }
         public List<Monkey> monkeys { get; private set; }
+        public List<DBMonkeyRecords> MonkeyRecords { get; set; }
+
         private Map map;
         public Wood(int woodID, List<Tree> trees, Map map, string path, DBRepository db)
         {
@@ -27,6 +29,7 @@ namespace EscapeFromTheWoods.Objects
             this.map = map;
             this.path = path;
             this.db = db;
+            MonkeyRecords = new List<DBMonkeyRecords>();
         }
         public void PlaceMonkey(string monkeyName, int monkeyID)
         {
@@ -60,8 +63,9 @@ namespace EscapeFromTheWoods.Objects
                 routeRecords.Add(new DBRouteRecords(j, route[j].treeID, route[j].x, route[j].y));
                 logs.Add(new DBLogs(woodID, monkey.monkeyID, $"{monkey.name} is now in tree {route[j].treeID} at location ({route[j].x},{route[j].y})"));
             }
-            
-            db.InsertMonkeyRecords(new DBMonkeyRecords(monkey.monkeyID, monkey.name, woodID, routeRecords));
+            DBMonkeyRecords monkeyRecord = new DBMonkeyRecords(monkey.monkeyID, monkey.name, woodID, routeRecords);
+            db.InsertMonkeyRecords(monkeyRecord);
+            MonkeyRecords.Add(monkeyRecord);
             db.InsertLogs(logs);
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.WriteLine($"{woodID}:write db routes {woodID},{monkey.name} end");

@@ -1,4 +1,6 @@
-﻿using EscapeFromTheWoods.Objects;
+﻿using Amazon.Runtime.Internal.Util;
+using EscapeFromTheWoods.Logging;
+using EscapeFromTheWoods.Objects;
 using MongoDBManager;
 using System;
 using System.Diagnostics;
@@ -14,8 +16,8 @@ namespace EscapeFromTheWoods
             Console.WriteLine("Hello World!");
             string connectionString = @"mongodb://localhost:27017/";
             DBRepository db = new DBRepository(connectionString);
-
-            string path = @"C:\Hogent\programmeren specialisatie\EscapeWoods\EscapeFromTheWoodsToRefactor\monkeys";
+            
+            string path = @"C:\Hogent\programmeren specialisatie\EscapeWoods\EscapeFromTheWoodsToRefactor\Woodsmap";
             Map m1 = new Map(0, 500, 0, 500);
             Wood w1 = WoodBuilder.GetWood(500, m1, path,db);
             w1.PlaceMonkey("Alice", IDgenerator.GetMonkeyID());
@@ -43,6 +45,7 @@ namespace EscapeFromTheWoods
             w2.WriteWoodToDB();
             w3.WriteWoodToDB();
             w1.Escape();
+            LogWriter logWriter = new LogWriter(w1.MonkeyRecords);
             w2.Escape();
             w3.Escape();
             
