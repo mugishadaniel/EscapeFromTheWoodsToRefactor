@@ -4,12 +4,13 @@ using EscapeFromTheWoods.Objects;
 using MongoDBManager;
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace EscapeFromTheWoods
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -18,6 +19,7 @@ namespace EscapeFromTheWoods
             DBRepository db = new DBRepository(connectionString);
             
             string path = @"C:\Hogent\programmeren specialisatie\EscapeWoods\EscapeFromTheWoodsToRefactor\Woodsmap";
+
             Map m1 = new Map(0, 500, 0, 500);
             Wood w1 = WoodBuilder.GetWood(500, m1, path,db);
             w1.PlaceMonkey("Alice", IDgenerator.GetMonkeyID());
@@ -41,14 +43,19 @@ namespace EscapeFromTheWoods
             w3.PlaceMonkey("Kobe", IDgenerator.GetMonkeyID());
             w3.PlaceMonkey("Kendra", IDgenerator.GetMonkeyID());
 
-            w1.WriteWoodToDB();
-            w2.WriteWoodToDB();
-            w3.WriteWoodToDB();
-            w1.Escape();
+            await w1.WriteWoodToDBAsync();
+            await w2.WriteWoodToDBAsync();
+            await w3.WriteWoodToDBAsync();
+
+            await w1.EscapeAsync();
             LogWriter logWriter = new LogWriter(w1.MonkeyRecords);
-            w2.Escape();
-            w3.Escape();
-            
+
+            await w2.EscapeAsync();
+            LogWriter logWriter2 = new LogWriter(w2.MonkeyRecords);
+
+            await w1.EscapeAsync();
+            LogWriter logWriter1 = new LogWriter(w3.MonkeyRecords);
+
             stopwatch.Stop();
             // Write result.
             Console.WriteLine("Time elapsed: {0}", stopwatch.Elapsed);

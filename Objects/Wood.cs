@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace EscapeFromTheWoods.Objects
 {
@@ -47,18 +48,18 @@ namespace EscapeFromTheWoods.Objects
         }
 
 
-        public void Escape()
+        public async Task EscapeAsync()
         {
-            List<List<Tree>> routes = new List<List<Tree>>();
+            List<Task<List<Tree>>> routes = new List<Task<List<Tree>>>();
             foreach (Monkey m in monkeys)
             {
-                routes.Add(EscapeMonkey(m));
+                routes.Add(EscapeMonkeyAsync(m));
             }
-            WriteEscaperoutesToBitmap(routes);
+            await WriteEscaperoutesToBitmapAsync((await Task.WhenAll(routes)).ToList());
         }
 
 
-        private void writeRouteToDB(Monkey monkey, List<Tree> route)
+        private async Task writeRouteToDBAsync(Monkey monkey, List<Tree> route)
         {
             try
             {
@@ -72,9 +73,9 @@ namespace EscapeFromTheWoods.Objects
                     logs.Add(new DBLogs(woodID, monkey.monkeyID, $"{monkey.name} is now in tree {route[j].treeID} at location ({route[j].x},{route[j].y})"));
                 }
                 DBMonkeyRecords monkeyRecord = new DBMonkeyRecords(monkey.monkeyID, monkey.name, woodID, routeRecords);
-                db.InsertMonkeyRecords(monkeyRecord);
+                await db.InsertMonkeyRecordsAsync(monkeyRecord);
                 MonkeyRecords.Add(monkeyRecord);
-                db.InsertLogs(logs);
+                await db.InsertLogsAsync(logs);
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Console.WriteLine($"{woodID}:write db routes {woodID},{monkey.name} end");
             }
@@ -86,7 +87,7 @@ namespace EscapeFromTheWoods.Objects
         }
 
 
-        public void WriteEscaperoutesToBitmap(List<List<Tree>> routes)
+        public async Task WriteEscaperoutesToBitmapAsync(List<List<Tree>> routes)
         {
             try
             {
@@ -130,13 +131,13 @@ namespace EscapeFromTheWoods.Objects
         }
 
 
-        public void WriteWoodToDB()
+        public async Task WriteWoodToDBAsync()
         {
             try
             {
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"{woodID}:write db wood {woodID} start");
-                db.InsertWoodRecords(new DBWoodRecords(woodID, trees));
+                await db.InsertWoodRecordsAsync(new DBWoodRecords(woodID, trees));
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"{woodID}:write db wood {woodID} end");
             }
@@ -146,7 +147,7 @@ namespace EscapeFromTheWoods.Objects
                 throw new Exception("Error in WriteWoodToDB", ex);
             }
         }
-        public List<Tree> EscapeMonkey(Monkey monkey)
+        public async Task<List<Tree>> EscapeMonkeyAsync(Monkey monkey)
         {
             try
             {
@@ -176,14 +177,14 @@ namespace EscapeFromTheWoods.Objects
                 map.xmax - monkey.tree.x,monkey.tree.y-map.ymin,monkey.tree.x-map.xmin }.Min();
                     if (distanceToMonkey.Count == 0)
                     {
-                        writeRouteToDB(monkey, route);
+                        await writeRouteToDBAsync(monkey, route);
                         Console.ForegroundColor = ConsoleColor.White;
                         Console.WriteLine($"{woodID}:end {woodID},{monkey.name}");
                         return route;
                     }
                     if (distanceToBorder < distanceToMonkey.First().Key)
                     {
-                        writeRouteToDB(monkey, route);
+                        await writeRouteToDBAsync(monkey, route);
                         Console.ForegroundColor = ConsoleColor.White;
                         Console.WriteLine($"{woodID}:end {woodID},{monkey.name}");
                         return route;

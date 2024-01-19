@@ -15,10 +15,10 @@ namespace EscapeFromTheWoods.Logging
         public LogWriter(List<DBMonkeyRecords> monkeyRecords)
         {
             MonkeyRecords = monkeyRecords;
-            LogOnTxtFile();
+            Task.Run(() => LogOnTxtFileAsync());
         }
 
-        private void LogOnTxtFile()
+        private async Task LogOnTxtFileAsync()
         {
             Console.WriteLine("Starting logging");
             string path = @"C:\Hogent\programmeren specialisatie\EscapeWoods\EscapeFromTheWoodsToRefactor\Logging\Logs";
@@ -43,7 +43,7 @@ namespace EscapeFromTheWoods.Logging
             {
                 foreach (var entry in sortedLogEntries)
                 {
-                    sw.WriteLine($"{entry.MonkeyName} is in tree {entry.TreeID} at ({entry.X},{entry.Y})");
+                   await sw.WriteLineAsync($"{entry.MonkeyName} is in tree {entry.TreeID} at ({entry.X},{entry.Y})");
                 }
             }
             Console.WriteLine("Logging ended");

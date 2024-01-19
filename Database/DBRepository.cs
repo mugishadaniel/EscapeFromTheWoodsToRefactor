@@ -20,19 +20,19 @@ namespace MongoDBManager
             Database = DbClient.GetDatabase("EscapeFromTheWoods");
         }
 
-        public void InsertWoodRecords(DBWoodRecords data)
+        public async Task InsertWoodRecordsAsync(DBWoodRecords data)
         {
             var collection = Database.GetCollection<DBWoodRecords>("WoodRecords");
             collection.InsertOne(data);
         }
 
-        public void InsertMonkeyRecords(DBMonkeyRecords data)
+        public async Task InsertMonkeyRecordsAsync(DBMonkeyRecords data)
         {
             var collection = Database.GetCollection<DBMonkeyRecords>("MonkeyRecords");
             collection.InsertOne(data);
         }
 
-        public void InsertLogs(List<DBLogs> data)
+        public async Task InsertLogsAsync(List<DBLogs> data)
         {
             var collection = Database.GetCollection<DBLogs>("Logs");
             collection.InsertMany(data);
