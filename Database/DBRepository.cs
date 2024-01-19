@@ -23,19 +23,19 @@ namespace MongoDBManager
         public async Task InsertWoodRecordsAsync(DBWoodRecords data)
         {
             var collection = Database.GetCollection<DBWoodRecords>("WoodRecords");
-            collection.InsertOne(data);
+            await collection.InsertOneAsync(data);
         }
 
         public async Task InsertMonkeyRecordsAsync(DBMonkeyRecords data)
         {
             var collection = Database.GetCollection<DBMonkeyRecords>("MonkeyRecords");
-            collection.InsertOne(data);
+            await collection.InsertOneAsync(data);
         }
 
         public async Task InsertLogsAsync(List<DBLogs> data)
         {
             var collection = Database.GetCollection<DBLogs>("Logs");
-            collection.InsertMany(data);
+            await collection.InsertManyAsync(data);
         }
 
     }
