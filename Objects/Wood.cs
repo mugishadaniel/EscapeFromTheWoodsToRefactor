@@ -50,12 +50,12 @@ namespace EscapeFromTheWoods.Objects
 
         public async Task EscapeAsync()
         {
-            List<Task<List<Tree>>> routes = new List<Task<List<Tree>>>();
+            Dictionary<Monkey, Task<List<Tree>>> routes = new Dictionary<Monkey, Task<List<Tree>>>();
             foreach (Monkey m in monkeys)
             {
-                routes.Add(EscapeMonkeyAsync(m));
+                routes[m] = EscapeMonkeyAsync(m);
             }
-            await WriteEscaperoutesToBitmapAsync((await Task.WhenAll(routes)).ToList());
+            await WriteEscaperoutesToBitmapAsync((await Task.WhenAll(routes.Values)).ToList());
         }
 
 
@@ -175,14 +175,16 @@ namespace EscapeFromTheWoods.Objects
                     //noord oost zuid west
                     double distanceToBorder = new List<double>(){ map.ymax - monkey.tree.y,
                 map.xmax - monkey.tree.x,monkey.tree.y-map.ymin,monkey.tree.x-map.xmin }.Min();
-                    if (distanceToMonkey.Count == 0)
+
+                    if (distanceToMonkey.Any() && distanceToBorder < distanceToMonkey.First().Key)
                     {
                         await writeRouteToDBAsync(monkey, route);
                         Console.ForegroundColor = ConsoleColor.White;
                         Console.WriteLine($"{woodID}:end {woodID},{monkey.name}");
                         return route;
                     }
-                    if (distanceToBorder < distanceToMonkey.First().Key)
+
+                    if (distanceToMonkey.Count == 0)
                     {
                         await writeRouteToDBAsync(monkey, route);
                         Console.ForegroundColor = ConsoleColor.White;
