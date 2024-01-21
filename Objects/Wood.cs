@@ -164,16 +164,34 @@ namespace EscapeFromTheWoods.Objects
                     visited[monkey.tree.treeID] = true;
                     SortedList<double, List<Tree>> distanceToMonkey = new SortedList<double, List<Tree>>();
 
-                    //zoek dichtste boom die nog niet is bezocht            
-                    foreach (Tree t in trees)
+                    // Get the cell of the current tree
+                    int x = (int)Math.Floor((monkey.tree.x - map.xmin) / gridDataSet.Delta);
+                    int y = (int)Math.Floor((monkey.tree.y - map.ymin) / gridDataSet.Delta);
+
+                    // Get the neighboring cells
+                    var neighboringCells = new List<List<Tree>>();
+                    for (int i = Math.Max(0, x - 1); i <= Math.Min(gridDataSet.NX - 1, x + 1); i++)
                     {
-                        if (!visited[t.treeID] && !t.hasMonkey)
+                        for (int j = Math.Max(0, y - 1); j <= Math.Min(gridDataSet.NY - 1, y + 1); j++)
                         {
-                            double d = Math.Sqrt(Math.Pow(t.x - monkey.tree.x, 2) + Math.Pow(t.y - monkey.tree.y, 2));
-                            if (distanceToMonkey.ContainsKey(d)) distanceToMonkey[d].Add(t);
-                            else distanceToMonkey.Add(d, new List<Tree>() { t });
+                            neighboringCells.Add(gridDataSet.GridData[i][j]);
                         }
                     }
+
+                    // Search for the closest tree in the neighboring cells
+                    foreach (var cell in neighboringCells)
+                    {
+                        foreach (Tree t in cell)
+                        {
+                            if (!visited[t.treeID] && !t.hasMonkey)
+                            {
+                                double d = Math.Sqrt(Math.Pow(t.x - monkey.tree.x, 2) + Math.Pow(t.y - monkey.tree.y, 2));
+                                if (distanceToMonkey.ContainsKey(d)) distanceToMonkey[d].Add(t);
+                                else distanceToMonkey.Add(d, new List<Tree>() { t });
+                            }
+                        }
+                    }
+
                     //distance to border            
                     //noord oost zuid west
                     double distanceToBorder = new List<double>(){ map.ymax - monkey.tree.y,
