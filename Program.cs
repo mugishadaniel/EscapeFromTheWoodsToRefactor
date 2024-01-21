@@ -64,6 +64,7 @@ namespace EscapeFromTheWoods
                 await w1.WriteWoodToDBAsync();
                 await w1.EscapeAsync();
                 LogWriter logWriter = new LogWriter(w1.MonkeyRecords);
+                await logWriter.StartLoggingAsync();
             });
 
             Task task2 = Task.Run(async () =>
@@ -71,6 +72,7 @@ namespace EscapeFromTheWoods
                 await w2.WriteWoodToDBAsync();
                 await w2.EscapeAsync();
                 LogWriter logWriter = new LogWriter(w2.MonkeyRecords);
+                await logWriter.StartLoggingAsync();
             });
 
             Task task3 = Task.Run(async () =>
@@ -78,6 +80,7 @@ namespace EscapeFromTheWoods
                 await w3.WriteWoodToDBAsync();
                 await w3.EscapeAsync();
                 LogWriter logWriter = new LogWriter(w3.MonkeyRecords);
+                await logWriter.StartLoggingAsync();
             });
 
             await Task.WhenAll(task1, task2, task3);

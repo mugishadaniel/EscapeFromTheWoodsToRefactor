@@ -15,8 +15,12 @@ namespace EscapeFromTheWoods.Logging
         public LogWriter(List<DBMonkeyRecords> monkeyRecords)
         {
             MonkeyRecords = monkeyRecords;
-            Task.Run(() => LogOnTxtFileAsync());
         }
+
+        public Task StartLoggingAsync()
+        {
+            return Task.Run(() => LogOnTxtFileAsync());
+        }   
 
         private async Task LogOnTxtFileAsync()
         {
