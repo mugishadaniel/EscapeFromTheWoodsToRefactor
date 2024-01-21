@@ -20,6 +20,7 @@ namespace EscapeFromTheWoods.Objects
         public List<Tree> trees { get; set; }
         public List<Monkey> monkeys { get; private set; }
         public List<DBMonkeyRecords> MonkeyRecords { get; set; }
+        private GridDataSet gridDataSet;
 
         private Map map;
         public Wood(int woodID, List<Tree> trees, Map map, string path, DBRepository db)
@@ -31,7 +32,9 @@ namespace EscapeFromTheWoods.Objects
             this.path = path;
             this.db = db;
             MonkeyRecords = new List<DBMonkeyRecords>();
+            this.gridDataSet = new GridDataSet(map, 10, trees);
         }
+
 
 
         public void PlaceMonkey(string monkeyName, int monkeyID)
