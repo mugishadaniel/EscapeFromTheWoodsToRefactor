@@ -32,7 +32,7 @@ namespace EscapeFromTheWoods.Objects
             this.path = path;
             this.db = db;
             MonkeyRecords = new List<DBMonkeyRecords>();
-            this.gridDataSet = new GridDataSet(map, 10, trees);
+            this.gridDataSet = new GridDataSet(map, 50, trees);
         }
 
 
@@ -66,8 +66,8 @@ namespace EscapeFromTheWoods.Objects
         {
             try
             {
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine($"{woodID}:write db routes {woodID},{monkey.name} start");
+                //Console.ForegroundColor = ConsoleColor.DarkGreen;
+                //Console.WriteLine($"{woodID}:write db routes {woodID},{monkey.name} start");
                 List<DBRouteRecords> routeRecords = new List<DBRouteRecords>();
                 List<DBLogs> logs = new List<DBLogs>();
                 for (int j = 0; j < route.Count; j++)
@@ -79,8 +79,8 @@ namespace EscapeFromTheWoods.Objects
                 await db.InsertMonkeyRecordsAsync(monkeyRecord);
                 MonkeyRecords.Add(monkeyRecord);
                 await db.InsertLogsAsync(logs);
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine($"{woodID}:write db routes {woodID},{monkey.name} end");
+                //Console.ForegroundColor = ConsoleColor.DarkGreen;
+                //Console.WriteLine($"{woodID}:write db routes {woodID},{monkey.name} end");
             }
             catch (Exception ex)
             {
@@ -95,7 +95,7 @@ namespace EscapeFromTheWoods.Objects
             try
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"{woodID}:write bitmap routes {woodID} start");
+                //Console.WriteLine($"{woodID}:write bitmap routes {woodID} start");
                 Color[] cvalues = new Color[] { Color.Red, Color.Yellow, Color.Blue, Color.Cyan, Color.GreenYellow };
                 Bitmap bm = new Bitmap((map.xmax - map.xmin) * drawingFactor, (map.ymax - map.ymin) * drawingFactor);
                 Graphics g = Graphics.FromImage(bm);
@@ -123,8 +123,8 @@ namespace EscapeFromTheWoods.Objects
                     colorN++;
                 }
                 bm.Save(Path.Combine(path, woodID.ToString() + "_escapeRoutes.jpg"), ImageFormat.Jpeg);
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"{woodID}:write bitmap routes {woodID} end");
+                //Console.ForegroundColor = ConsoleColor.Yellow;
+                //Console.WriteLine($"{woodID}:write bitmap routes {woodID} end");
             }
             catch (Exception ex)
             {
@@ -138,11 +138,11 @@ namespace EscapeFromTheWoods.Objects
         {
             try
             {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"{woodID}:write db wood {woodID} start");
+                //Console.ForegroundColor = ConsoleColor.Green;
+                //Console.WriteLine($"{woodID}:write db wood {woodID} start");
                 await db.InsertWoodRecordsAsync(new DBWoodRecords(woodID, trees));
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"{woodID}:write db wood {woodID} end");
+                //Console.ForegroundColor = ConsoleColor.Green;
+                //Console.WriteLine($"{woodID}:write db wood {woodID} end");
             }
             catch (Exception ex)
             {
@@ -154,8 +154,8 @@ namespace EscapeFromTheWoods.Objects
         {
             try
             {
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine($"{woodID}:start {woodID},{monkey.name}");
+                //Console.ForegroundColor = ConsoleColor.White;
+                //Console.WriteLine($"{woodID}:start {woodID},{monkey.name}");
                 Dictionary<int, bool> visited = new Dictionary<int, bool>();
                 trees.ForEach(x => visited.Add(x.treeID, false));
                 List<Tree> route = new List<Tree>() { monkey.tree };
@@ -164,11 +164,11 @@ namespace EscapeFromTheWoods.Objects
                     visited[monkey.tree.treeID] = true;
                     SortedList<double, List<Tree>> distanceToMonkey = new SortedList<double, List<Tree>>();
 
-                    // Get the cell of the current tree
+                    // Zoekt de huidige vak waar de aap zich bevindt
                     int x = (int)Math.Floor((monkey.tree.x - map.xmin) / gridDataSet.Delta);
                     int y = (int)Math.Floor((monkey.tree.y - map.ymin) / gridDataSet.Delta);
 
-                    // Get the neighboring cells
+                    // Zoekt de omliggende vakken
                     var neighboringCells = new List<List<Tree>>();
                     for (int i = Math.Max(0, x - 1); i <= Math.Min(gridDataSet.NX - 1, x + 1); i++)
                     {
@@ -178,19 +178,31 @@ namespace EscapeFromTheWoods.Objects
                         }
                     }
 
-                    // Search for the closest tree in the neighboring cells
+                    // Zoekt de bomen in de omliggende vakken
                     foreach (var cell in neighboringCells)
                     {
                         foreach (Tree t in cell)
                         {
                             if (!visited[t.treeID] && !t.hasMonkey)
                             {
-                                double d = Math.Sqrt(Math.Pow(t.x - monkey.tree.x, 2) + Math.Pow(t.y - monkey.tree.y, 2));
+                                double d = Math.Sqrt(Math.Pow(t.x - monkey.tree.x, 2) + Math.Pow(t.y - monkey.tree.y, 2)) + new Random().NextDouble() * 0.0001;
                                 if (distanceToMonkey.ContainsKey(d)) distanceToMonkey[d].Add(t);
                                 else distanceToMonkey.Add(d, new List<Tree>() { t });
                             }
                         }
                     }
+
+
+                    ////zoek dichtste boom die nog niet is bezocht            
+                    //foreach (Tree t in trees)
+                    //{
+                    //    if (!visited[t.treeID] && !t.hasMonkey)
+                    //    {
+                    //        double d = Math.Sqrt(Math.Pow(t.x - monkey.tree.x, 2) + Math.Pow(t.y - monkey.tree.y, 2));
+                    //        if (distanceToMonkey.ContainsKey(d)) distanceToMonkey[d].Add(t);
+                    //        else distanceToMonkey.Add(d, new List<Tree>() { t });
+                    //    }
+                    //}
 
                     //distance to border            
                     //noord oost zuid west
@@ -200,16 +212,16 @@ namespace EscapeFromTheWoods.Objects
                     if (distanceToMonkey.Any() && distanceToBorder < distanceToMonkey.First().Key)
                     {
                         await writeRouteToDBAsync(monkey, route);
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Console.WriteLine($"{woodID}:end {woodID},{monkey.name}");
+                        //Console.ForegroundColor = ConsoleColor.White;
+                        //Console.WriteLine($"{woodID}:end {woodID},{monkey.name}");
                         return route;
                     }
 
                     if (distanceToMonkey.Count == 0)
                     {
                         await writeRouteToDBAsync(monkey, route);
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Console.WriteLine($"{woodID}:end {woodID},{monkey.name}");
+                        //Console.ForegroundColor = ConsoleColor.White;
+                        //Console.WriteLine($"{woodID}:end {woodID},{monkey.name}");
                         return route;
                     }
 

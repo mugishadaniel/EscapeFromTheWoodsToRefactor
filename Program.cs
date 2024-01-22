@@ -14,7 +14,6 @@ namespace EscapeFromTheWoods
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            Console.WriteLine("Hello World!");
             string connectionString = @"mongodb://localhost:27017/";
             DBRepository db = new DBRepository(connectionString);
 
@@ -88,7 +87,6 @@ namespace EscapeFromTheWoods
             stopwatch.Stop();
             // Write result.
             Console.WriteLine("Time elapsed: {0}", stopwatch.Elapsed);
-            Console.WriteLine("end");
         }
     }
 }

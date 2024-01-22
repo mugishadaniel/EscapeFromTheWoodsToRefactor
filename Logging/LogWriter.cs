@@ -24,7 +24,7 @@ namespace EscapeFromTheWoods.Logging
 
         private async Task LogOnTxtFileAsync()
         {
-            Console.WriteLine("Starting logging");
+            //Console.WriteLine("Starting logging");
             string path = @"C:\Hogent\programmeren specialisatie\EscapeWoods\EscapeFromTheWoodsToRefactor\Logging\Logs";
             string fileName = $"Log_{DateTime.Now.ToString("dd-MM-yyyy_HH-mm-ss")}_Wood{MonkeyRecords[0].WoodID}.txt";
             string fullPath = Path.Combine(path, fileName);
@@ -50,7 +50,7 @@ namespace EscapeFromTheWoods.Logging
                    await sw.WriteLineAsync($"{entry.MonkeyName} is in tree {entry.TreeID} at ({entry.X},{entry.Y})");
                 }
             }
-            Console.WriteLine("Logging ended");
+            //Console.WriteLine("Logging ended");
         }
     }
 }
